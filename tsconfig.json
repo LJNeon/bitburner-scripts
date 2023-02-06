@@ -1,0 +1,29 @@
+{
+  "include": [
+    "src/**/*.ts",
+    "**/*.d.ts",
+    "vite.config.ts"
+  ],
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "esnext",
+    "lib": [
+      "esnext",
+      "dom"
+    ],
+    "baseUrl": "./src",
+    "moduleResolution": "Node",
+    "allowJs": true,
+    "strict": true,
+    "noImplicitThis": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "inlineSourceMap": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@ns": [
+        "../definitions.d.ts"
+      ]
+    }
+  }
+}

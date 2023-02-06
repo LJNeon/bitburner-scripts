@@ -1,0 +1,22 @@
+{
+  "name": "bitburner-scripts",
+  "version": "0.1.0",
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "author": "ElJay#7711",
+  "scripts": {
+    "lint": "eslint",
+    "watch": "viteburner"
+  },
+  "dependencies": {
+    "typescript": "^4.9.4",
+    "vite": "^3.2.5",
+    "viteburner": "^0.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/parser": "^5.48.2",
+    "eslint": "^8.32.0"
+  }
+}
