@@ -17,7 +17,7 @@
  */
 
 import {NS, Server} from "@ns";
-import {Job} from "../util/const";
+import {Job, ThreadSecurity} from "../util/const";
 import {GetGrowThreads, GetWeakThreads} from "../util/stat";
 import {SleepPids} from "../util/misc";
 import RAM from "../util/ram";
@@ -32,26 +32,20 @@ export default async function Prepare(ns: NS, hostname: string) {
   while(!Prepared(server = ns.getServer(hostname))) {
     const ram = new RAM(ns);
     const pids: number[] = [];
+    const growThreads = server.moneyAvailable === server.moneyMax ? 0 : GetGrowThreads(ns, server, ns.getPlayer());
 
-    if(server.hackDifficulty !== server.minDifficulty) {
+    if(server.hackDifficulty !== server.minDifficulty || growThreads !== 0) {
       pids.push(...ram.Spawn(
         ns,
         hostname,
         Job.Weak1,
-        GetWeakThreads(server.hackDifficulty - server.minDifficulty),
+        GetWeakThreads(server.hackDifficulty - server.minDifficulty + (growThreads * ThreadSecurity.Grow)),
         true
       ));
     }
 
-    if(server.moneyAvailable !== server.moneyMax) {
-      pids.push(...ram.Spawn(
-        ns,
-        hostname,
-        Job.Grow,
-        GetGrowThreads(ns, server, ns.getPlayer()),
-        true
-      ));
-    }
+    if(growThreads !== 0)
+      pids.push(...ram.Spawn(ns, hostname, Job.Grow, growThreads, true));
 
     await SleepPids(ns, pids);
   }

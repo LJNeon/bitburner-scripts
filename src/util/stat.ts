@@ -47,7 +47,7 @@ export function GetGrowThreads(ns: NS, server: Server, player: Player) {
     prev = threads;
   }
 
-  return Math.ceil(Math.max(threads, prev, 0));
+  return Math.ceil(Math.ceil(Math.max(threads, prev, 0)) * 1.01);
 }
 export function GetHackThreads(ns: NS, server: Server, player: Player, leech: number) {
   return Math.floor(leech / ns.formulas.hacking.hackPercent(server, player));
@@ -87,7 +87,7 @@ function GetDepthLimit(ns: NS, hostname: string, leech: number) {
   let depth = 0;
 
   for(; depth < limit; depth++) {
-    if(ram.Batch(ns, "", threads) == null)
+    if(ram.Batch(ns, hostname, threads) == null)
       break;
   }
 

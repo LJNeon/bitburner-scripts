@@ -225,8 +225,10 @@ class Batcher {
   }
 
   #Oldest() {
-    for(const batch of this.#batches.values())
-      return batch;
+    for(const batch of this.#batches.values()) {
+      if(batch.finished.length === 0)
+        return batch;
+    }
 
     return null;
   }
@@ -302,6 +304,7 @@ class Batcher {
       return;
 
     this.#ns.clearLog();
+    this.#ns.print(`.* Every ${this.#ns.tFormat(this.#duration)} *.`);
     this.#ns.print(`${this.#started} started`);
     this.#ns.print(`- ${this.#late} late (${GetPercent(this.#late / this.#started)})`);
     this.#ns.print(`- ${this.#cancelled} cancelled (${GetPercent(this.#cancelled / this.#started)})`);
@@ -394,6 +397,7 @@ class Batcher {
 
 export async function main(ns: NS) {
   ns.disableLog("ALL");
+  ns.clearLog();
   ns.tail();
 
   let batcher: Batcher | undefined;
@@ -410,6 +414,7 @@ export async function main(ns: NS) {
     }
 
     // TODO: Add fancy logging.
+    ns.print("Preparing...");
     await Prepare(ns, metrics[0].hostname);
     batcher = new Batcher(ns, metrics[0]);
 

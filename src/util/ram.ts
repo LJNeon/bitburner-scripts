@@ -131,7 +131,6 @@ export default class RAM {
     let pids: Record<Job, number> | null = JobRecord(0);
 
     for(const job of Jobs) {
-      const per = this.#Per(job);
       const chunk = this.#Largest(job, threads[job]);
 
       if(chunk == null) {
@@ -141,13 +140,12 @@ export default class RAM {
         break;
       }else{
         const size = this.#servers.get(chunk.hostname);
+        const count = this.#Cores(chunk.hostname, threads[job]);
 
         if(size == null)
           throw Impossible();
 
-        const count = this.#Cores(chunk.hostname, threads[job]);
-
-        this.#servers.set(chunk.hostname, size - (count * per));
+        this.#servers.set(chunk.hostname, size - (count * this.#Per(job)));
 
         if(!this.#simulate) {
           const pid = ns.exec(PermScript[job], chunk.hostname, count, hostname, GetID());

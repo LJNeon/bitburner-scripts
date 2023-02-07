@@ -71,8 +71,8 @@ export enum JobDuration {
   Grow = 3.2,
   Hack = 1
 }
-export const JOB_SPACER = 15;
-export const SAFE_THRESHOLD = 10;
+export const JOB_SPACER = 20;
+export const SAFE_THRESHOLD = 20;
 export const HACK_LEVEL_RANGE = 10;
 export const MIN_HOME_RAM = 16;
 export const SHARE_PERCENT = 0.25;

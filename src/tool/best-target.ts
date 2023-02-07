@@ -33,7 +33,7 @@ export function main(ns: NS) {
 
   for(const target of hacking) {
     message += `\n${Color.Info}${++i}. ${Color.Default}${target.hostname}`;
-    message += ` at ${ns.nFormat(target.leech * 100, "0,0")}% for $${ns.nFormat(target.profit, "0.00a")}/min`;
+    message += ` at ${ns.nFormat(target.leech * 100, "0.0")}% for $${ns.nFormat(target.profit, "0.00a")}/min`;
   }
 
   message += `\n\n${Color.Success}Best Server for XP:\n1. ${Color.Default}${xp}`;
