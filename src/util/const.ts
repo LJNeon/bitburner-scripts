@@ -88,3 +88,4 @@ export const JOB_ORDER = [
 ];
 export const NORMAL_ABBRS = ["", "k", "m", "b", "t", "q", "Q", "s", "S", "o", "n", "d"];
 export const BYTE_ABBRS = ["b", "kB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+export const PORT_PROGRAMS = ["BruteSSH.exe", "FTPCrack.exe", "relaySMTP.exe", "HTTPWorm.exe", "SQLInject.exe"];

@@ -28,10 +28,8 @@ export async function main(ns: NS) {
 
   while(true) {
     await ws.nextWrite();
-
-    const threads = Number(ws.read());
-
-    await ns.grow(String(ns.args[0]), {threads});
+    ws.read();
+    await ns.grow(String(ns.args[0]));
     ws.write(OP.Finished);
   }
 }

@@ -276,7 +276,7 @@ class Batcher {
 
     this.#stage = Stage.Stopping;
 
-    for(const [id, batch] of this.#batches) {
+    for(const [id, batch] of [...this.#batches]) {
       if(!batch.workers.has(Job.Hack)) {
         pending.push(this.#Cancel(id));
         this.#batches.delete(id);
@@ -299,22 +299,25 @@ class Batcher {
 
   #Print(now: number) {
     this.#lastPrint = now;
-
-    if(this.#started === 0)
-      return;
-
     this.#ns.clearLog();
-    this.#ns.print(`.* Every ${this.#ns.tFormat(this.#duration)} *.`);
-    this.#ns.print(`${this.#started} started`);
-    this.#ns.print(`- ${this.#late} late (${GetPercent(this.#late / this.#started)})`);
-    this.#ns.print(`- ${this.#cancelled} cancelled (${GetPercent(this.#cancelled / this.#started)})`);
-    this.#ns.print(`- ${this.#partial} partial (${GetPercent(this.#partial / this.#started)})`);
 
-    if(this.#finished === 0)
-      return;
+    if(this.#stage === Stage.Stopping) {
+      this.#ns.print(`Stopping... (${this.#batches.size} remaining)`);
+    }else if(this.#stage === Stage.Running) {
+      this.#ns.print(`.* Every ${this.#ns.tFormat(this.#duration)} *.`);
+      this.#ns.print(`${this.#started} started`);
+      this.#ns.print(`- ${this.#late} late (${GetPercent(this.#late / this.#started)})`);
+      this.#ns.print(`- ${this.#cancelled} cancelled (${GetPercent(this.#cancelled / this.#started)})`);
+      this.#ns.print(`- ${this.#partial} partial (${GetPercent(this.#partial / this.#started)})`);
 
-    this.#ns.print(`${this.#finished} finished`);
-    this.#ns.print(`- ${this.#desynced} desynced (${GetPercent(this.#desynced / this.#finished)})`);
+      if(this.#finished === 0)
+        return;
+
+      this.#ns.print(`${this.#finished} finished`);
+      this.#ns.print(`- ${this.#desynced} desynced (${GetPercent(this.#desynced / this.#finished)})`);
+    }else{
+      this.#ns.print("Stopped!");
+    }
   }
 
   async Run() {
@@ -352,27 +355,25 @@ class Batcher {
 
           break;
         }
+      }else{
+        const level = this.#ns.getPlayer().skills.hacking;
 
-        continue;
+        if(level > this.#maxLevel) {
+          await this.#Stop();
+
+          continue;
+        }else if(this.#level !== level) {
+          this.#level = level;
+          this.#Adjust();
+        }
+
+        const nextAt = this.#createdAt + (this.#duration * this.#started);
+
+        if(nextAt <= now)
+          this.#Start(nextAt);
+
+        await this.#Process(now);
       }
-
-      const level = this.#ns.getPlayer().skills.hacking;
-
-      if(level > this.#maxLevel) {
-        await this.#Stop();
-
-        continue;
-      }else if(this.#level !== level) {
-        this.#level = level;
-        this.#Adjust();
-      }
-
-      const nextAt = this.#createdAt + (this.#duration * this.#started);
-
-      if(nextAt <= now)
-        this.#Start(nextAt);
-
-      await this.#Process(now);
 
       if(now - this.#lastPrint >= PRINT_SPACER)
         this.#Print(now);

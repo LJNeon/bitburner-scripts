@@ -140,7 +140,7 @@ export default class RAM {
         break;
       }else{
         const size = this.#servers.get(chunk.hostname);
-        const count = this.#Cores(chunk.hostname, threads[job]);
+        const count = job === Job.Hack ? threads[job] : this.#Cores(chunk.hostname, threads[job]);
 
         if(size == null)
           throw Impossible();
