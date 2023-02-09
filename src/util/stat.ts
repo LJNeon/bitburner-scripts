@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 import {NS, Server, Player} from "@ns";
 import {
   Job, ThreadSecurity, JobDuration, JOB_SPACER,

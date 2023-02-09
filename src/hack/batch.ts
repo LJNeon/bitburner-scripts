@@ -142,7 +142,7 @@ class Batcher {
   async #Process(now: number) {
     for(const [id, batch] of this.#batches) {
       for(const [job, pid] of batch.workers) {
-        if(this.#ns.readPort(pid) === OP.Finished) {
+        if(this.#ns.readPort(pid + Port.Offset) === OP.Finished) {
           batch.workers.delete(job);
           batch.finished.push(job);
           this.#workers[job].push(pid);
@@ -173,9 +173,9 @@ class Batcher {
       throw Impossible();
 
     [pid] = replacement;
-    await Promise.race([this.#ns.getPortHandle(pid).nextWrite(), this.#ns.asleep(3e4)]);
+    await Promise.race([this.#ns.getPortHandle(pid + Port.Offset).nextWrite(), this.#ns.asleep(3e4)]);
 
-    if(this.#ns.readPort(pid) !== OP.Online)
+    if(this.#ns.readPort(pid + Port.Offset) !== OP.Online)
       throw Error("A replacement worker failed to respond as online.");
 
     return pid;
@@ -268,7 +268,7 @@ class Batcher {
       throw Impossible();
 
     batch.workers.set(job, pid);
-    this.#ns.writePort(pid, this.#threads[job]);
+    this.#ns.writePort(pid + Port.Offset, job === Job.Hack ? this.#threads[job] : OP.Start);
   }
 
   async #Stop() {
@@ -337,10 +337,13 @@ class Batcher {
 
     let pids = Object.values(this.#workers).flat();
 
-    await Promise.race([Promise.all(pids.map(pid => this.#ns.getPortHandle(pid).nextWrite())), this.#ns.asleep(3e4)]);
+    await Promise.race([
+      Promise.all(pids.map(pid => this.#ns.getPortHandle(pid + Port.Offset).nextWrite())),
+      this.#ns.asleep(1e4)
+    ]);
 
-    if((pids = pids.filter(pid => this.#ns.readPort(pid) !== OP.Online)).length !== 0)
-      throw Error(`${Color.Fail}${pids.length}/${this.#depth * 4} workers failed to respond as online.`);
+    if((pids = pids.filter(pid => this.#ns.readPort(pid + Port.Offset) !== OP.Online)).length !== 0)
+      throw Error(`${pids.length}/${this.#depth * 4} workers failed to respond as online.`);
 
     this.#createdAt = performance.now();
 

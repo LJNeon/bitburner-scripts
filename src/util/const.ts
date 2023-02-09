@@ -25,12 +25,12 @@ export enum Color {
 }
 export enum Port {
   Online = 1,
-  Controller = 2,
-  Workers = 3
+  Offset = 100
 }
 export enum OP {
   Online = 0,
-  Finished = 1
+  Start = 1,
+  Finished = 2
 }
 export enum Stage {
   Running = 0,

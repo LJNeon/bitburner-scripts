@@ -22,7 +22,7 @@ export async function main(ns: NS) {
   if(ns.peek(Port.Online) !== OP.Online)
     return;
 
-  const ws = ns.getPortHandle(ns.pid);
+  const ws = ns.getPortHandle(ns.pid + Port.Offset);
 
   ws.write(OP.Online);
 
