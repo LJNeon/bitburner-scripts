@@ -30,7 +30,7 @@ function GetStatus(ns: NS) {
 export async function main(ns: NS) {
   ns.disableLog("ALL");
 
-  const scripts = ns.ls("home", "bin");
+  const scripts = ns.ls("home", "bin").concat(ns.ls("home", "util"));
   let {programs, locked, openable} = GetStatus(ns);
 
   do {

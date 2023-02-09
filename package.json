@@ -9,14 +9,14 @@
     "watch": "viteburner"
   },
   "dependencies": {
-    "typescript": "^4.9.4",
-    "vite": "^3.2.5",
-    "viteburner": "^0.4.2"
+    "typescript": "^4.9.5",
+    "vite": "^4.1.1",
+    "viteburner": "^0.5.1"
   },
   "devDependencies": {
-    "@types/node": "^18.11.18",
-    "@typescript-eslint/eslint-plugin": "^5.48.2",
-    "@typescript-eslint/parser": "^5.48.2",
-    "eslint": "^8.32.0"
+    "@types/node": "^18.13.0",
+    "@typescript-eslint/eslint-plugin": "^5.51.0",
+    "@typescript-eslint/parser": "^5.51.0",
+    "eslint": "^8.33.0"
   }
 }
