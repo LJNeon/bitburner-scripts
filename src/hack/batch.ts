@@ -61,14 +61,18 @@ class Scheduler {
   }
 
   async Run(now: number) {
+    const pending = [];
+
     for(const [id, task] of this.#tasks) {
       const delay = this.#delays[task.job];
 
       if(task.createdAt + delay <= now) {
         this.#tasks.delete(id);
-        await task.run(now - task.createdAt - delay);
+        pending.push(task.run(now - task.createdAt - delay));
       }
     }
+
+    await Promise.all(pending);
   }
 }
 
@@ -304,7 +308,7 @@ class Batcher {
     if(this.#stage === Stage.Stopping) {
       this.#ns.print(`Stopping... (${this.#batches.size} remaining)`);
     }else if(this.#stage === Stage.Running) {
-      this.#ns.print(`.* Every ${this.#ns.tFormat(this.#duration)} *.`);
+      this.#ns.print(`.* ${this.#ns.tFormat(this.#duration, true)} / ${this.#depth} *.`);
       this.#ns.print(`${this.#started} started`);
       this.#ns.print(`- ${this.#late} late (${GetPercent(this.#late / this.#started)})`);
       this.#ns.print(`- ${this.#cancelled} cancelled (${GetPercent(this.#cancelled / this.#started)})`);
@@ -370,9 +374,9 @@ class Batcher {
           this.#Adjust();
         }
 
-        const nextAt = this.#createdAt + (this.#duration * this.#started);
+        let nextAt;
 
-        if(nextAt <= now)
+        while((nextAt = this.#createdAt + (this.#duration * this.#started)) <= now)
           this.#Start(nextAt);
 
         await this.#Process(now);

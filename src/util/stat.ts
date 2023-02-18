@@ -116,7 +116,7 @@ export function GetServerMetrics(ns: NS, hostname: string) {
     const chance = ns.formulas.hacking.hackChance(server, ns.getPlayer());
     const period = GetBatchPeriod(ns, hostname, limit);
 
-    if(period == null)
+    if(period == null || period.duration < JOB_SPACER * 8)
       break;
 
     const profit = server.moneyMax * leech * chance * 6e4 / period.duration;
