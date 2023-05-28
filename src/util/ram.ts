@@ -45,7 +45,7 @@ export default class RAM {
     for(const server of servers) {
       let size = server.maxRam - (this.#simulate ? 0 : server.ramUsed);
 
-      if(server.hostname === "home")
+      if(server.hostname === "home" && this.#simulate)
         size -= MIN_HOME_RAM;
       else if(server.purchasedByPlayer
           && (this.#simulate || ns.getRunningScript(ShareScript, server.hostname) == null))
